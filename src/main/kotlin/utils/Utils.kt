@@ -75,16 +75,37 @@ object Utils {
 
     private fun writeToFile(url: URL, pathName: String) {
         val bufferedImage = ImageIO.read(url)
-        val scaledImage = getResizedImage(bufferedImage, STICKER_SIZE, STICKER_SIZE)
+        val scaledImage = getResizedImage(bufferedImage)
         val outputFile = File(pathName)
         ImageIO.write(scaledImage, "png", outputFile)
     }
-    private fun getResizedImage(img: BufferedImage, newW: Int, newH: Int): BufferedImage {
-        val tmp = img.getScaledInstance(newW, newH, Image.SCALE_SMOOTH)
-        val dimg = BufferedImage(newW, newH, BufferedImage.TYPE_INT_ARGB)
+
+    private fun getResizedImage(img: BufferedImage): BufferedImage {
+        val dimension = getScaledDimension(img)
+        val tmp = img.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH)
+        val dimg = BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB)
         val g2d = dimg.createGraphics()
         g2d.drawImage(tmp, 0, 0, null)
         g2d.dispose()
         return dimg
+    }
+
+    private fun getScaledDimension(img: BufferedImage): Dimension {
+        val width = img.width
+        val height = img.height
+        val boundWidth = STICKER_SIZE
+        val boundHeight = STICKER_SIZE
+        var newWidth = width
+        var newHeight = height
+
+        if (width != boundWidth) {
+            newWidth = boundWidth
+            newHeight = newWidth * height / width
+        }
+        if (newHeight > boundHeight) {
+            newHeight = boundHeight
+            newWidth = newHeight * width / height
+        }
+        return Dimension(newWidth, newHeight)
     }
 }
