@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/line-to-telegram.iml" filepath="$PROJECT_DIR$/.idea/modules/line-to-telegram.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/line-to-telegram_main.iml" filepath="$PROJECT_DIR$/.idea/modules/line-to-telegram_main.iml" group="line-to-telegram" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/line-to-telegram_test.iml" filepath="$PROJECT_DIR$/.idea/modules/line-to-telegram_test.iml" group="line-to-telegram" />
+    </modules>
+  </component>
+</project>
