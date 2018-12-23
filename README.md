@@ -26,7 +26,7 @@ Now you can publish your sticker pack, just do it via the Telegram [stickers bot
 
 <img src="https://github.com/kekc42/line-to-telegram/blob/master/Dragonball.PNG?raw=true" width="50%" />
 
-[1]: https://github.com/kekc42/line-to-telegram/releases/download/1.0.0/line-to-telegram.jar
+[1]: https://github.com/lndmflngs/line-to-telegram/releases/latest
 [2]: https://store.line.me/stickershop/showcase/top/en
 [3]: https://store.line.me/stickershop/product/1439/en
 [4]: https://t.me/addstickers/LineDBStrickers
