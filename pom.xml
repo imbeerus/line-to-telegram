@@ -9,21 +9,21 @@
     <version>1.0.1</version>
 
     <properties>
-        <jsoup.version>1.11.3</jsoup.version>
         <kotlin.version>1.3.11</kotlin.version>
+        <jsoup.version>1.11.3</jsoup.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
         <dependency>
             <!-- jsoup HTML parser library @ https://jsoup.org/ -->
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>${jsoup.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlin-stdlib-jdk8</artifactId>
-            <version>${kotlin.version}</version>
         </dependency>
     </dependencies>
 
@@ -48,5 +48,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

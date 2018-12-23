@@ -11,8 +11,6 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="line-to-telegram" target="1.5" />
-      <module name="line-to-telegram_main" target="1.8" />
-      <module name="line-to-telegram_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
