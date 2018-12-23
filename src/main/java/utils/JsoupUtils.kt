@@ -4,9 +4,10 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
 object JsoupUtils {
+    private const val LINE_CORP = "Copyright © LINE Corporation"
+    private const val RIGHTS = "All Rights Reserved"
+
     private val NEW_LINE = System.getProperty("line.separator")
-    private val LINE_CORP = "Copyright © LINE Corporation"
-    private val RIGHTS = "All Rights Reserved"
 
     fun getImageLinks(doc: Element): Array<String> {
         val imageList = getListElements(doc)

@@ -6,12 +6,12 @@ import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
 
-
 object Utils {
-    private val FONT_SIZE = 48
-    private val STICKER_SIZE = 512
+    private const val FONT_SIZE = 48
+    private const val STICKER_SIZE = 512
+    private const val DEFAULT_FOLDER_NAME = "stickers"
+
     private val WORKING_DIRECTORY = System.getProperty("user.dir")
-    private val DEFAULT_FOLDER_NAME = "stickers"
 
     fun saveImage(imageUrl: String, name: String, dir: String) {
         val pathName = "$WORKING_DIRECTORY//$dir//$name.png"

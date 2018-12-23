@@ -1,13 +1,13 @@
 import model.Pack
 import utils.Utils
 
-private val FIVE_SECOND = 5000L
-private val STICKER_SHOP_URL = "https://store.line.me/stickershop"
+private const val FIVE_SECOND = 5000L
+private const val STICKER_SHOP_URL = "https://store.line.me/stickershop"
 
 fun main(args: Array<String>) {
-    args.forEach {
-        if (it.startsWith(STICKER_SHOP_URL)) {
-            val stickerPack = Pack(it)
+    args.forEach { link ->
+        if (link.startsWith(STICKER_SHOP_URL)) {
+            val stickerPack = Pack(link)
             Utils.createDirectory(stickerPack.title)
             stickerPack.stickers.forEach { Utils.saveImage(it.url, it.name, stickerPack.title) }
             Utils.writeCaptionImage(stickerPack.copyright, stickerPack.title)
