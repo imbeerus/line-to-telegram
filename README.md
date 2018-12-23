@@ -6,6 +6,9 @@ Tool to convert a set of Line stickers into Telegram stickers.
 ### Download
 Download the [latest JAR][1]
 
+### Support
+If you want to support the the project or show your appreciation feel free to **[buy me a coffee / donate](https://www.paypal.me/kekc1304/1)**
+
 ### How to use
 1. Go to [Line stickershop][2]
 1. Pick the set of stickers that you want ([Dragonball][3] for example)
