@@ -63,7 +63,7 @@ object JsoupUtils {
     }
 
     fun getPackTitle(doc: Element): String {
-        val element = doc.select("div.mdBox03Inner01").first().select("h3.mdCMN08Ttl").first()
+        val element = doc.select("div.mdBox03Inner01 p").first()
         return element.text().replace("/?%*:|\"<>".toRegex(),"")
     }
 
