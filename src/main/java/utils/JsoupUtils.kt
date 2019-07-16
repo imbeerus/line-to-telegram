@@ -64,7 +64,7 @@ object JsoupUtils {
 
     fun getPackTitle(doc: Element): String {
         val element = doc.select("div.mdBox03Inner01 p").first()
-        return element.text().replace("/?%*:|\"<>".toRegex(),"")
+        return element.text().replace("[^a-zA-Z0-9 ]".toRegex(),"")
     }
 
 }
