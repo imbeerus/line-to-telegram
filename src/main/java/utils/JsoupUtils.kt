@@ -2,32 +2,42 @@ package utils
 
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
+import java.util.*
 
 object JsoupUtils {
+
     private const val LINE_CORP = "Copyright © LINE Corporation"
     private const val RIGHTS = "All Rights Reserved"
 
-    private val NEW_LINE = System.getProperty("line.separator")
+    private val NEW_LINE = System.lineSeparator()
 
     fun getImageLinks(doc: Element): Array<String> {
         val imageList = getListElements(doc)
+        return if (imageList != null) {
 
-        // From each li element select span that contains img url in it style
-        // We get first because li contains only one span
-        val imageElements = arrayListOf<Element>()
-        imageList.forEach { imageElements.add(it.select("span.mdCMN09Image").first()) }
+            // From each li element select span that contains img url in it style
+            // We get first because li contains only one span
+            val imageElements = arrayListOf<Element>()
+            imageList.forEach { imageElements.add(it.select("span.mdCMN09Image").first()) }
 
-        // For each span element get style attr and a clear url from it
-        val imageUrls = arrayListOf<String>()
-        imageElements.forEach { imageUrls.add(getUrlFromStyle(it.attr("style"))) }
+            // For each span element get style attr and a clear url from it
+            val imageUrls = arrayListOf<String>()
+            imageElements.forEach { image -> imageUrls.add(getUrlFromStyle(image.attr("style"))) }
 
-        return imageUrls.toTypedArray()
+            imageUrls.toTypedArray()
+        } else {
+            emptyArray()
+        }
     }
 
     // Select each li element with image by selecting of div -> ul -> li
-    private fun getListElements(doc: Element): Elements {
-        val imageList = doc.select("div.mdCMN09ImgList").first()
-        return imageList.select("ul.mdCMN09Ul").first().select("li.mdCMN09Li")
+    private fun getListElements(doc: Element): Elements? {
+        return try {
+            val imageList = doc.select("div.mdCMN09ImgList").first()
+            imageList.select("ul.mdCMN09Ul").first().select("li.mdCMN09Li")
+        } catch (e: Exception) {
+            null
+        }
     }
 
     // Get a clean url from style, selecting just in the middle of the brackets and without params
@@ -63,8 +73,8 @@ object JsoupUtils {
     }
 
     fun getPackTitle(doc: Element): String {
-        val element = doc.select("div.mdBox03Inner01 p").first()
-        return element.text().replace("[^a-zA-Z0-9 ]".toRegex(),"")
+        val element = doc.select("p.mdCMN38Item01Ttl").firstOrNull()
+        return element?.text()?.replace("[^a-zA-Z0-9 ]".toRegex(), "") ?: UUID.randomUUID().toString()
     }
 
 }

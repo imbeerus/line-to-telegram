@@ -7,9 +7,9 @@ import java.net.URL
 import javax.imageio.ImageIO
 
 object Utils {
-    private const val FONT_SIZE = 48
-    private const val STICKER_SIZE = 512
-    private const val DEFAULT_FOLDER_NAME = "stickers"
+
+    private const val FONT_SIZE = 62
+    private const val STICKER_SIZE_PX = 512
 
     private val WORKING_DIRECTORY = System.getProperty("user.dir")
 
@@ -19,24 +19,16 @@ object Utils {
         writeToFile(url, pathName)
     }
 
-    fun saveImage(imageUrl: String, name: String) {
-        saveImage(imageUrl, name, DEFAULT_FOLDER_NAME)
-    }
-
     fun writeCaptionImage(caption: String, dir: String) {
         val fontSize = when {
-            caption.length > 40 -> FONT_SIZE / 4
+            caption.length > 40 -> FONT_SIZE / 3
             caption.length > 20 -> FONT_SIZE / 2
             else -> FONT_SIZE
         }
         val font = Font("Roboto", Font.PLAIN, fontSize)
-        val fontDimension = Dimension(STICKER_SIZE, STICKER_SIZE)
+        val fontDimension = Dimension(STICKER_SIZE_PX, STICKER_SIZE_PX)
         val image = createCaptionImage(caption, font, fontDimension)
         ImageIO.write(image, "png", File("$WORKING_DIRECTORY//$dir//copyright.png"))
-    }
-
-    fun writeCaptionImage(str: String) {
-        writeCaptionImage(str, DEFAULT_FOLDER_NAME)
     }
 
     fun createDirectory(name: String) {
@@ -44,26 +36,26 @@ object Utils {
         dir.mkdir()
     }
 
-    private fun createCaptionImage(str: String, font: Font, dimension: Dimension): BufferedImage {
+    private fun createCaptionImage(str: String, fontToSet: Font, dimension: Dimension): BufferedImage {
         val img = BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB)
 
-        val g2d = img.createGraphics()
-        g2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY)
-        g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE)
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
-        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
-        g2d.font = font
+        val g2d = img.createGraphics().apply {
+            setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
+            setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+            setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY)
+            setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE)
+            setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON)
+            setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+            setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY)
+            setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE)
+            font = fontToSet
+            color = Color.BLACK
+        }
 
         val fm = g2d.fontMetrics
-        g2d.color = Color.BLACK
-
         val lines = str.split("\n")
-        val x = (STICKER_SIZE - fm.stringWidth(lines[lines.size - 1])) / 2
-        var y = (STICKER_SIZE / lines.size) - fm.ascent / lines.size
+        val x = (STICKER_SIZE_PX - fm.stringWidth(lines[lines.size - 1])) / 2
+        var y = (STICKER_SIZE_PX / lines.size) - fm.ascent / lines.size
         for (line in lines) {
             g2d.drawString(line, x, y)
             y += fm.height
@@ -84,26 +76,25 @@ object Utils {
         val dimension = getScaledDimension(img)
         val tmp = img.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH)
         val dimg = BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB)
-        val g2d = dimg.createGraphics()
-        g2d.drawImage(tmp, 0, 0, null)
-        g2d.dispose()
+        dimg.createGraphics().run{
+            drawImage(tmp, 0, 0, null)
+            dispose()
+        }
         return dimg
     }
 
     private fun getScaledDimension(img: BufferedImage): Dimension {
         val width = img.width
         val height = img.height
-        val boundWidth = STICKER_SIZE
-        val boundHeight = STICKER_SIZE
         var newWidth = width
         var newHeight = height
 
-        if (width != boundWidth) {
-            newWidth = boundWidth
+        if (width != STICKER_SIZE_PX) {
+            newWidth = STICKER_SIZE_PX
             newHeight = newWidth * height / width
         }
-        if (newHeight > boundHeight) {
-            newHeight = boundHeight
+        if (newHeight > STICKER_SIZE_PX) {
+            newHeight = STICKER_SIZE_PX
             newWidth = newHeight * width / height
         }
         return Dimension(newWidth, newHeight)
