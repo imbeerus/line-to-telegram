@@ -17,6 +17,11 @@ When work is done, a folder with images on it will be created.
 
 Now you can publish your sticker pack, just do it via the Telegram [stickers bot][5]
 
+### Attention
+Check that sticker pack available for your region
+
+<img src="https://github.com/lndmflngs/line-to-telegram/blob/master/region.png?raw=true" width="70%" />
+
 ### Result example
 
 #### [DRAGONBALL][4]
