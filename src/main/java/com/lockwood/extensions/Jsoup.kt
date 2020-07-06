@@ -47,17 +47,13 @@ fun selectStickersImageList(
 fun selectPackTitle(
     page: Element
 ): String {
-    val invalidCharactersRegex="[\\\\/:*?\"<>|]".toRegex() //regex to remove invalid chars from path
-
-
     val titleParagraph = page.packTitleParagraph
-    val title = titleParagraph.text()
-    val titleCleaned=title.replace(invalidCharactersRegex, "")
+    val title = titleParagraph.text().removeFileNameInvalidCharacters()
 
-    return if (titleCleaned.isEmpty()) {
+    return if (title.isEmpty()) {
         throw IllegalStateException("There is no title to parse, probably sticker pack not available for your region")
     } else {
-        titleCleaned
+        title
     }
 }
 

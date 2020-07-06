@@ -5,6 +5,10 @@ import com.lockwood.constants.Image.PNG_IMAGE_FORMAT
 import com.lockwood.model.Sticker
 import java.io.File
 
+private const val INVALID_CHARACTERS_REGEX = "[\\\\/:*?\"<>|]"
+
+fun String.removeFileNameInvalidCharacters(): String = replace(INVALID_CHARACTERS_REGEX.toRegex(), "")
+
 fun String.makeDir() {
     val dir = File(this)
     dir.mkdir()
