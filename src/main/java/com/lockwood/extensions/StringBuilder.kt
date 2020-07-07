@@ -2,10 +2,8 @@ package com.lockwood.extensions
 
 import java.io.File
 
-private const val FILE_EXTENSION_SEPARATOR = "."
-
 fun StringBuilder.appendPath(
-    string: String
+        string: String
 ): StringBuilder {
     return run {
         append(string)
@@ -14,12 +12,12 @@ fun StringBuilder.appendPath(
 }
 
 fun StringBuilder.appendFileName(
-    name: String,
-    extension: String
+        name: String,
+        extension: String
 ): StringBuilder {
     return run {
         append(name)
-        append(FILE_EXTENSION_SEPARATOR)
+        append(".")
         append(extension)
     }
 }

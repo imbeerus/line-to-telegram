@@ -1,11 +1,11 @@
 package com.lockwood
 
-import com.lockwood.constants.Desktop
-import com.lockwood.constants.LineWeb
 import com.lockwood.executor.pack.StickerPackExecutor
 import com.lockwood.executor.sticker.StickerPackImageSaver
+import com.lockwood.executor.sticker.TelegramImageConverter
 import com.lockwood.extensions.*
 import com.lockwood.model.StickerPack
+import com.lockwood.parser.LineStickerPackParser
 import java.util.concurrent.ExecutionException
 
 @ExperimentalStdlibApi
@@ -23,6 +23,7 @@ fun main(
     //endregion
 
     //region Fields
+    val lineStickerPackParser = LineStickerPackParser()
     val failedLinks = mutableListOf<String>()
     //endregion
 
@@ -33,9 +34,7 @@ fun main(
 
     //region Read args and start parsing given links
     args.forEach { link ->
-        val isValidLink = link.startsWith(LineWeb.STICKER_SHOP_URL)
-
-        if (isValidLink) {
+        if (lineStickerPackParser.isValidLink(link)) {
 
             //region Show start message
             printStartMessage(link)
@@ -45,20 +44,30 @@ fun main(
             val stickerPack: StickerPack
 
             try {
-                stickerPack = StickerPackExecutor(stickerPageLink = link).get()
+                stickerPack = StickerPackExecutor(link = link, parser = lineStickerPackParser).get()
             } catch (e: ExecutionException) {
                 failedLinks.add(link)
                 return@forEach
             }
-
             //endregion
 
+            //region Start parse Sticker Pack
             try {
                 StickerPackImageSaver(stickerPack = stickerPack).execute()
             } catch (e: ExecutionException) {
                 failedLinks.add(link)
                 return@forEach
             }
+            //endregion
+
+            //region Start prepare Sticker Images for Telegram
+            try {
+                TelegramImageConverter(folderName = stickerPack.title, isAnimated = stickerPack.isAnimated).execute()
+            } catch (e: ExecutionException) {
+                failedLinks.add(link)
+                return@forEach
+            }
+            //endregion
         }
     }
     //endregion
@@ -73,7 +82,7 @@ fun main(
         val isFullSuccess = failedLinks.isEmpty()
         val isHasFails = failedLinks.isNotEmpty()
 
-        val currentDirectory = Desktop.WORKING_DIRECTORY
+        val currentDirectory = System.getProperty("user.dir")
 
         printDownloadSuccessMessage()
         printDownloadPathMessage(currentDirectory)

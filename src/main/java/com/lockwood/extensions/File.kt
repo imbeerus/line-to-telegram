@@ -1,13 +1,9 @@
 package com.lockwood.extensions
 
-import com.lockwood.constants.Desktop.STICKERS_DIRECTORY
-import com.lockwood.constants.Image.PNG_IMAGE_FORMAT
 import com.lockwood.model.Sticker
 import java.io.File
 
-private const val INVALID_CHARACTERS_REGEX = "[\\\\/:*?\"<>|]"
-
-fun String.removeFileNameInvalidCharacters(): String = replace(INVALID_CHARACTERS_REGEX.toRegex(), "")
+val STICKERS_DIRECTORY = "${System.getProperty("user.dir")}${File.separator}Stickers"
 
 fun String.makeDir() {
     val dir = File(this)
@@ -16,12 +12,23 @@ fun String.makeDir() {
 
 fun String.makeStickerPackDir() {
     STICKERS_DIRECTORY.makeDir()
-    STICKERS_DIRECTORY.plus(File.separator).plus(this).makeDir()
+    buildStickerPackPath(this).makeDir()
 }
 
-fun Sticker.existInStickerPackDir(): Boolean {
-    val fileName = id.toString().plus(File.separator).plus(PNG_IMAGE_FORMAT)
-    val filePath = STICKERS_DIRECTORY.plus(File.separator).plus(fileName)
+fun buildStickerPackPath(name: String) = buildString {
+    appendPath(STICKERS_DIRECTORY)
+    append(name)
+}
+
+fun Sticker.existInStickerPackDir(packTitle: String, fileExtension: String): Boolean {
+    val fileName = buildString {
+        appendFileName(id.toString(), fileExtension)
+    }
+    val filePath = buildString {
+        appendPath(STICKERS_DIRECTORY)
+        appendPath(packTitle)
+        append(fileName)
+    }
 
     return File(filePath).exists()
 }

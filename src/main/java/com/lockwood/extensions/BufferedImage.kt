@@ -4,7 +4,7 @@ import java.awt.Image
 import java.awt.image.BufferedImage
 
 fun BufferedImage.getScaledInstance(
-    resultSize: Int
+        resultSize: Int
 ): BufferedImage {
     val sizePair = getScaledSizePair(resultSize)
     val (width: Int, height: Int) = sizePair.run { first to second }
@@ -21,7 +21,7 @@ fun BufferedImage.getScaledInstance(
 }
 
 fun BufferedImage.getScaledSizePair(
-    resultSize: Int
+        resultSize: Int
 ): Pair<Int, Int> {
     val width = width
     val height = height

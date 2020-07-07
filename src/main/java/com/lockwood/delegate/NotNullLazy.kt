@@ -9,15 +9,15 @@ class NotNullLazy<T> : ReadWriteProperty<Any?, T> {
 
     @Throws(IllegalStateException::class)
     override fun getValue(
-        thisRef: Any?,
-        property: KProperty<*>
+            thisRef: Any?,
+            property: KProperty<*>
     ): T = notNullValue ?: throw IllegalStateException("${property.name} not init")
 
     @Throws(IllegalStateException::class)
     override fun setValue(
-        thisRef: Any?,
-        property: KProperty<*>,
-        value: T
+            thisRef: Any?,
+            property: KProperty<*>,
+            value: T
     ) {
         notNullValue = if (notNullValue == null) {
             value
