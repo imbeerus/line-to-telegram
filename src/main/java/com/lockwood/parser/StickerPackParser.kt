@@ -7,7 +7,7 @@ abstract class StickerPackParser {
 
     abstract fun isValidLink(link: String): Boolean
 
-    abstract fun parseStickerPack(link: String): StickerPack
+    abstract suspend fun parseStickerPack(link: String): StickerPack
 
     abstract fun selectPackTitle(page: Element): String
 

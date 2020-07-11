@@ -4,6 +4,8 @@ import com.lockwood.extensions.parseId
 import com.lockwood.extensions.removeFileNameInvalidCharacters
 import com.lockwood.model.Sticker
 import com.lockwood.model.StickerPack
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
@@ -24,8 +26,12 @@ class LineStickerPackParser : StickerPackParser() {
     override fun isValidLink(link: String): Boolean = link.startsWith(STICKER_SHOP_URL)
 
     @Throws(IllegalStateException::class)
-    override fun parseStickerPack(link: String): StickerPack {
-        val page = Jsoup.connect(link).get().body()
+    override suspend fun parseStickerPack(link: String): StickerPack {
+        // WithContext suspends the current coroutine and runs its block in the specified coroutine context. Once the block is complete this coroutine resumes.
+        // The IO dispatcher is designed for blocking I/O jobs. It shares a threadpool with the Default dispatcher but spawns new threads if none are available.
+        val page = withContext(Dispatchers.IO) {
+            Jsoup.connect(link).get().body()
+        }
 
         val packTitle = selectPackTitle(page)
         val packCopyright = selectPackCopyright(page)
@@ -64,13 +70,7 @@ class LineStickerPackParser : StickerPackParser() {
         val isAnimated = liImagesList.first().attr("data-preview").isAnimatedType()
 
         // From each li element select span that contains img url in data-preview
-        val imageLinks = buildList {
-
-            liImagesList.forEach {
-                val imageLink = it.attr("data-preview").parseImageLink()
-                add(imageLink)
-            }
-        }
+        val imageLinks = liImagesList.map { it.attr("data-preview").parseImageLink() }
 
         return Pair(imageLinks, isAnimated)
     }

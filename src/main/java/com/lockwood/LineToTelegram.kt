@@ -1,11 +1,10 @@
 package com.lockwood
 
-import com.lockwood.executor.pack.StickerPackExecutor
-import com.lockwood.executor.sticker.StickerPackImageSaver
-import com.lockwood.executor.sticker.TelegramImageConverter
+import com.lockwood.extensions.convertImagesInFolderForTelegram
+import com.lockwood.extensions.saveStickers
 import com.lockwood.extensions.*
-import com.lockwood.model.StickerPack
 import com.lockwood.parser.LineStickerPackParser
+import kotlinx.coroutines.*
 import java.util.concurrent.ExecutionException
 
 @ExperimentalStdlibApi
@@ -22,65 +21,56 @@ fun main(
     }
     //endregion
 
-    //region Fields
-    val lineStickerPackParser = LineStickerPackParser()
-    val failedLinks = mutableListOf<String>()
-    //endregion
+    // runBlocking blocks the main thread and essentially behaves like a coroutineScope (see LineWeb.saveStickersInPack() for more info)
+    // The default dispatcher schedules coroutines on a thread pool with a number of threads equal to the number of CPU cores on the machine.
+    // It is designed for running CPU-intensive workloads.
+    runBlocking(Dispatchers.Default) {
+        val failedLinks = mutableListOf<Deferred<String?>>()
+        args.forEach { link ->
+            val lineStickerPackParser = LineStickerPackParser()
+            if (lineStickerPackParser.isValidLink(link)) {
 
-    //region Setup Executors
-    ioExecutor = newIOExecutor(args.size)
-    networkExecutor = newNetworkExecutor(args.size)
-    //endregion
+                //region Show start message
+                printStartMessage(link)
+                //endregion
 
-    //region Read args and start parsing given links
-    args.forEach { link ->
-        if (lineStickerPackParser.isValidLink(link)) {
+                // Async launches a coroutine which will go and run in another thread from the Default dispatcher.
+                // The result of the coroutine can be fetched via .await()-ing the return value from async()
+                // This is different from other async libraries, as coroutines are sequential by default and require you to opt-in to launching concurrent jobs
+                failedLinks += async {
+                    //region Start parse Sticker Pack
+                    val stickerPack = try {
+                        lineStickerPackParser.parseStickerPack(link)
+                    } catch (e: ExecutionException) {
+                        return@async link
+                    }
+                    //endregion
 
-            //region Show start message
-            printStartMessage(link)
-            //endregion
+                    //region Start parse Sticker Pack
+                    try {
+                        saveStickers(stickerPack = stickerPack)
+                    } catch (e: ExecutionException) {
+                        return@async link
+                    }
+                    //endregion
 
-            //region Start parse Sticker Pack
-            val stickerPack: StickerPack
+                    //region Start prepare Sticker Images for Telegram
+                    try {
+                        convertImagesInFolderForTelegram(folderName = stickerPack.title)
+                    } catch (e: ExecutionException) {
+                        return@async link
+                    }
+                    //endregion
 
-            try {
-                stickerPack = StickerPackExecutor(link = link, parser = lineStickerPackParser).get()
-            } catch (e: ExecutionException) {
-                failedLinks.add(link)
-                return@forEach
+                    return@async null
+                }
             }
-            //endregion
-
-            //region Start parse Sticker Pack
-            try {
-                StickerPackImageSaver(stickerPack = stickerPack).execute()
-            } catch (e: ExecutionException) {
-                failedLinks.add(link)
-                return@forEach
-            }
-            //endregion
-
-            //region Start prepare Sticker Images for Telegram
-            try {
-                TelegramImageConverter(folderName = stickerPack.title, isAnimated = stickerPack.isAnimated).execute()
-            } catch (e: ExecutionException) {
-                failedLinks.add(link)
-                return@forEach
-            }
-            //endregion
         }
-    }
-    //endregion
 
-    //region Shutdown executors
-    ioExecutor.shutdown()
-    networkExecutor.shutdown()
-    //endregion
-
-    awaitTermination(ioExecutor, networkExecutor) {
         //region Show result message
-        val isFullSuccess = failedLinks.isEmpty()
-        val isHasFails = failedLinks.isNotEmpty()
+        // awaitAll() will wait for all the async jobs to complete and return the results from all of them
+        val allFailedLinks = failedLinks.awaitAll().filterNotNull()
+        val isFullSuccess = allFailedLinks.isEmpty()
 
         val currentDirectory = System.getProperty("user.dir")
 
@@ -88,13 +78,11 @@ fun main(
         printDownloadPathMessage(currentDirectory)
 
         if (isFullSuccess) {
-            return
-        }
-
-        if (isHasFails) {
-            printDownloadFailedMessage(failedLinks)
+            return@runBlocking
+        } else {
+            printDownloadFailedMessage(allFailedLinks)
         }
         //endregion
     }
-
+    //endregion
 }
