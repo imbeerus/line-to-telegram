@@ -1,16 +1,23 @@
 import com.lockwood.extensions.*
 import com.lockwood.model.Sticker
 import com.lockwood.model.StickerPack
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 
-@ExperimentalStdlibApi
 @Throws(IllegalStateException::class)
-fun parseStickerPack(
+suspend fun parseStickerPack(
     link: String
 ): StickerPack {
-    val page = Jsoup.connect(link).get().body()
+    // WithContext suspends the current coroutine and runs its block in the specified coroutine context. Once the block is complete this coroutine resumes.
+    // The IO dispatcher is designed for blocking I/O jobs. It shares a threadpool with the Default dispatcher but spawns new threads if none are available.
+    val page = withContext(Dispatchers.IO) {
+        Jsoup.connect(link).get().body()
+    }
 
     val packTitle = selectPackTitle(page)
     val packCopyright = selectPackCopyright(page)
@@ -23,7 +30,6 @@ fun parseStickerPack(
     return StickerPack(packTitle, packCopyright, stickers)
 }
 
-@ExperimentalStdlibApi
 fun selectStickersImageList(
     page: Element
 ): List<String> {
@@ -34,13 +40,7 @@ fun selectStickersImageList(
     }
 
     // From each li element select span that contains img url in data-preview
-    return buildList {
-
-        liImagesList.forEach {
-            val imageLink = it.dataPreview.parseImageLink()
-            add(imageLink)
-        }
-    }
+    return liImagesList.map { it.dataPreview.parseImageLink() }
 }
 
 @Throws(IllegalStateException::class)

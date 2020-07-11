@@ -3,6 +3,8 @@ package com.lockwood.constants
 import com.lockwood.extensions.appendFileName
 import com.lockwood.extensions.appendPath
 import com.lockwood.extensions.getScaledInstance
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
@@ -15,11 +17,15 @@ object Image {
 
     private const val TELEGRAM_STICKER_SIZE_PX = 512
 
-    fun readImageFromUrl(
+    // WithContext suspends the current coroutine and runs its block in the specified coroutine context. Once the block is complete this coroutine resumes.
+    // The IO dispatcher is designed for blocking I/O jobs. It shares a threadpool with the Default dispatcher but spawns new threads if none are available.
+    suspend fun readImageFromUrl(
         url: String
-    ): BufferedImage = ImageIO.read(URL(url))
+    ): BufferedImage = withContext(Dispatchers.IO) {
+        ImageIO.read(URL(url))
+    }
 
-    fun saveImage(
+    suspend fun saveImage(
         image: BufferedImage,
         name: String,
         directoryName: String
@@ -38,10 +44,10 @@ object Image {
         }
     }
 
-    private fun writeImageToFile(
+    private suspend fun writeImageToFile(
         bufferedImage: BufferedImage,
         pathName: String
-    ) {
+    ) = withContext(Dispatchers.IO) {
         val scaledImage = bufferedImage.getScaledInstance(TELEGRAM_STICKER_SIZE_PX)
         val outputFile = File(pathName)
 
