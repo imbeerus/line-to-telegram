@@ -7,7 +7,6 @@ import com.lockwood.parser.LineStickerPackParser
 import kotlinx.coroutines.*
 import java.util.concurrent.ExecutionException
 
-@ExperimentalStdlibApi
 fun main(
         args: Array<String>
 ) {
@@ -77,12 +76,9 @@ fun main(
         printDownloadSuccessMessage()
         printDownloadPathMessage(currentDirectory)
 
-        if (isFullSuccess) {
-            return@runBlocking
-        } else {
+        if (!isFullSuccess) {
             printDownloadFailedMessage(allFailedLinks)
         }
         //endregion
     }
-    //endregion
 }
