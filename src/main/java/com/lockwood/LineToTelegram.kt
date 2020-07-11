@@ -5,6 +5,7 @@ import com.lockwood.extensions.saveStickers
 import com.lockwood.extensions.*
 import com.lockwood.parser.LineStickerPackParser
 import kotlinx.coroutines.*
+import java.lang.IllegalStateException
 import java.util.concurrent.ExecutionException
 
 fun main(
@@ -40,7 +41,7 @@ fun main(
                     //region Start parse Sticker Pack
                     val stickerPack = try {
                         lineStickerPackParser.parseStickerPack(link)
-                    } catch (e: ExecutionException) {
+                    } catch (e: Exception) {
                         return@async link
                     }
                     //endregion
@@ -48,7 +49,7 @@ fun main(
                     //region Start parse Sticker Pack
                     try {
                         saveStickers(stickerPack = stickerPack)
-                    } catch (e: ExecutionException) {
+                    } catch (e: Exception) {
                         return@async link
                     }
                     //endregion
@@ -56,7 +57,7 @@ fun main(
                     //region Start prepare Sticker Images for Telegram
                     try {
                         convertImagesInFolderForTelegram(folderName = stickerPack.title)
-                    } catch (e: ExecutionException) {
+                    } catch (e: Exception) {
                         return@async link
                     }
                     //endregion
