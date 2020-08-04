@@ -7,17 +7,17 @@ import com.lockwood.model.Sticker
 import java.util.concurrent.ExecutorService
 
 class StickerImageSaver(
-        private val executor: ExecutorService = networkExecutor,
-        private val sticker: Sticker
+    private val executor: ExecutorService = networkExecutor,
+    private val sticker: Sticker
 ) : Executor {
 
     override fun execute() = with(sticker) {
         executor.execute {
             saveImage(
-                    url = sticker.url,
-                    name = name,
-                    fileExtension = sticker.imageFormat,
-                    directoryName = packTitle
+                url = sticker.url,
+                name = name,
+                fileExtension = sticker.imageFormat,
+                directoryName = packTitle
             )
         }
     }

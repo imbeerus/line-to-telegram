@@ -18,7 +18,7 @@ val File.extension: String
     get() = name.substringAfterLast(".")
 
 fun scaleImagesForTelegram(
-        path: String
+    path: String
 ) {
     val directory = File(path)
     directory.walk().forEach { file ->
@@ -32,10 +32,10 @@ fun scaleImagesForTelegram(
 }
 
 fun saveImage(
-        url: String,
-        name: String,
-        fileExtension: String,
-        directoryName: String
+    url: String,
+    name: String,
+    fileExtension: String,
+    directoryName: String
 ) {
     val absoluteImagePath = buildString {
         appendPath(STICKERS_DIRECTORY)
@@ -51,8 +51,8 @@ fun saveImage(
 }
 
 private fun writeImage(
-        url: String,
-        path: String
+    url: String,
+    path: String
 ) {
     val readableByteChannel: ReadableByteChannel = Channels.newChannel(URL(url).openStream())
 
@@ -62,7 +62,7 @@ private fun writeImage(
 }
 
 private fun getResizedImage(
-        img: BufferedImage
+    img: BufferedImage
 ): BufferedImage {
     val dimension = getScaledDimension(img)
     val tmp = img.getScaledInstance(dimension.width, dimension.height, Image.SCALE_SMOOTH)
@@ -75,7 +75,7 @@ private fun getResizedImage(
 }
 
 private fun getScaledDimension(
-        img: BufferedImage
+    img: BufferedImage
 ): Dimension {
     val width = img.width
     val height = img.height

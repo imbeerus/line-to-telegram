@@ -7,7 +7,7 @@ var currentThreadName: String
     }
 
 fun switchThreadName(
-        newThreadName: String
+    newThreadName: String
 ) {
     currentThreadName = newThreadName
 }

@@ -2,7 +2,6 @@ package com.lockwood
 
 import com.lockwood.executor.pack.StickerPackExecutor
 import com.lockwood.executor.sticker.StickerPackImageSaver
-import com.lockwood.executor.sticker.TelegramImageConverter
 import com.lockwood.extensions.*
 import com.lockwood.model.StickerPack
 import com.lockwood.parser.LineStickerPackParser
@@ -10,7 +9,7 @@ import java.util.concurrent.ExecutionException
 
 @ExperimentalStdlibApi
 fun main(
-        args: Array<String>
+    args: Array<String>
 ) {
 
     //region Show no args message
@@ -59,15 +58,6 @@ fun main(
                 return@forEach
             }
             //endregion
-
-            //region Start prepare Sticker Images for Telegram
-            try {
-                TelegramImageConverter(folderName = stickerPack.title, isAnimated = stickerPack.isAnimated).execute()
-            } catch (e: ExecutionException) {
-                failedLinks.add(link)
-                return@forEach
-            }
-            //endregion
         }
     }
     //endregion
@@ -82,10 +72,8 @@ fun main(
         val isFullSuccess = failedLinks.isEmpty()
         val isHasFails = failedLinks.isNotEmpty()
 
-        val currentDirectory = System.getProperty("user.dir")
-
         printDownloadSuccessMessage()
-        printDownloadPathMessage(currentDirectory)
+        printDownloadPathMessage(System.getProperty("user.dir"))
 
         if (isFullSuccess) {
             return

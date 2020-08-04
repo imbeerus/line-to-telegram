@@ -10,7 +10,7 @@ private const val NOTHING_TO_DOWNLOAD_CAPTION = "You didn't pass any arguments t
 private const val CURRENT_THREAD_CAPTION = "Current Thread[%s]: %s"
 
 private const val TELEGRAM_BOT_MESSAGE =
-        "Now you can use @Stickers bot ($STICKERS_BOT_URL) at Telegram to create sticker packs"
+    "Now you can use @Stickers bot ($STICKERS_BOT_URL) at Telegram to create sticker packs"
 
 private const val ADD_ISSUE_MESSAGE = "There are some troubles while parsing\n" +
         "Check that sticker packs available for your region\n" +
@@ -18,14 +18,14 @@ private const val ADD_ISSUE_MESSAGE = "There are some troubles while parsing\n" 
         "Links: %s"
 
 fun printStartMessage(
-        stickerPackLink: String
+    stickerPackLink: String
 ) {
     val message = START_DOWNLOAD_CAPTION.format(stickerPackLink)
     println(message)
 }
 
 fun printDownloadFailedMessage(
-        links: List<String>
+    links: List<String>
 ) {
     val linksCaption = links.toString()
 
@@ -40,7 +40,7 @@ fun printCurrentThread() {
 }
 
 fun printDownloadPathMessage(
-        path: String
+    path: String
 ) {
     val message = PATH_DOWNLOAD_CAPTION.format(path)
     println(message)

@@ -14,10 +14,7 @@ class LineStickerPackParser : StickerPackParser() {
     companion object {
 
         private const val STICKER_SHOP_URL = "https://store.line.me/stickershop"
-
-        private const val STATIC_IMAGE_TYPE = "static"
         private const val ANIMATION_IMAGE_TYPE = "animation"
-
         private const val DEFAULT_IMAGE_FORMAT = "png"
     }
 

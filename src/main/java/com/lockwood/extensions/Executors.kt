@@ -10,28 +10,28 @@ var networkExecutor: ExecutorService by notNullLazy()
 var ioExecutor: ExecutorService by notNullLazy()
 
 fun newIOExecutor(
-        minutes: Number
+    minutes: Number
 ): ExecutorService {
     return ThreadPoolExecutor(
-            0, 2,
-            minutes.toLong(), TimeUnit.MINUTES,
-            LinkedBlockingQueue()
+        0, 2,
+        minutes.toLong(), TimeUnit.MINUTES,
+        LinkedBlockingQueue()
     )
 }
 
 fun newNetworkExecutor(
-        minutes: Number
+    minutes: Number
 ): ExecutorService {
     return ThreadPoolExecutor(
-            0, 5,
-            minutes.toLong(), TimeUnit.MINUTES,
-            LinkedBlockingQueue()
+        0, 5,
+        minutes.toLong(), TimeUnit.MINUTES,
+        LinkedBlockingQueue()
     )
 }
 
 inline fun awaitTermination(
-        vararg executor: ExecutorService,
-        onDone: () -> Unit = {}
+    vararg executor: ExecutorService,
+    onDone: () -> Unit = {}
 ) {
     val executorsCount = executor.size
 
